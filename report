@@ -1,0 +1,69 @@
+Transportation Optimization
+Vogel's Approximation Method (VAM) & MODI Method Case Study
+
+Candidate: Vikki Kumar
+Roll Number: 2501CS85
+Program: B.Tech Computer Science and Engineering
+Department: Department of Computer Science & Engineering
+Institution: Indian Institute of Technology Patna
+
+Date: September 2026
+
+1. Problem Formulation & Initial Data
+The objective is to compute the optimal, cost-minimizing distribution schedule for dispatching standard inventory from three regional supply origins (S₁, S₂, S₃) to four destination demand nodes (D₁, D₂, D₃, D₄). The per-unit freight charges, origin capacities, and destination requirements are tabulated below:
+
+Source / Destination	D₁	D₂	D₃	D₄	Supply (aᵢ)
+S₁	19	30	50	10	7
+S₂	70	30	40	60	9
+S₃	40	8	70	20	18
+Demand (bⱼ)	5	8	7	14	34
+Feasibility & Balance Verification:
+
+∑ aᵢ = 7 + 9 + 18 = 34 units | ∑ bⱼ = 5 + 8 + 7 + 14 = 34 units
+
+Since total source availability matches aggregate recipient requirement (∑ aᵢ = ∑ bⱼ = 34), the transportation system is strictly balanced without requiring dummy row/column allocations.
+
+
+
+2. Initial Basic Feasible Solution (VAM)
+Vogel's Approximation Method (VAM) was deployed using iterative row/column penalty evaluations (differences between the two least costs in each dimension). Allocations prioritized the lowest-cost cells in vectors showing maximum opportunity loss penalties.
+
+Source / Destination	D₁	D₂	D₃	D₄	Row Total
+S₁	5	—	—	2	7
+S₂	—	—	7	2	9
+S₃	—	8	—	10	18
+Initial Objective Cost Evaluation:
+
+Z_VAM = (5 × 19) + (2 × 10) + (7 × 40) + (2 × 60) + (8 × 8) + (10 × 20)
+
+Z_VAM = 95 + 20 + 280 + 120 + 64 + 200 = 779 cost units
+
+Basic cells count: m + n - 1 = 3 + 4 - 1 = 6 allocations (non-degenerate initial basis).
+
+
+
+
+3. Optimality Testing & Improvement (MODI Method)
+The Modified Distribution (MODI / u-v) method was applied across the initial basis by assigning row potentials uᵢ and column potentials vⱼ adhering to uᵢ + vⱼ = cᵢⱼ for all basic routes (setting u₁ = 0). Evaluating non-basic cells via net evaluation factors Δᵢⱼ = cᵢⱼ - (uᵢ + vⱼ) identified an entering cell at (2,2) with negative opportunity cost (Δ₂₂ = -18 < 0).
+
+A closed loop (2,2)⁺ → (3,2)⁻ → (3,4)⁺ → (2,4)⁻ was traced, determining a reallocation threshold of θ = min(8, 2) = 2 units. Executing loop adjustments yielded the revised optimal shipment schedule:
+
+Source / Destination	D₁	D₂	D₃	D₄	Fulfilled Supply
+S₁	5	—	—	2	7 / 7
+S₂	—	2	7	—	9 / 9
+S₃	—	6	—	12	18 / 18
+Optimality Proof & Minimum Cost Determination:
+
+Recomputed opportunity costs: Δ₁₂ = 32, Δ₁₃ = 42, Δ₂₁ = 19, Δ₂₄ = 18, Δ₃₁ = 11, Δ₃₃ = 52.
+
+Since Δᵢⱼ ≥ 0 for all vacant positions, global optimality is achieved.
+
+Z_Optimal = (5 × 19) + (2 × 10) + (2 × 30) + (7 × 40) + (6 × 8) + (12 × 20)
+
+Z_Optimal = 95 + 20 + 60 + 280 + 48 + 240 = 743 cost units (Net savings: 36 units)
+
+
+
+4. Computational Implementation & Execution
+The optimization pipeline was automated using Python, executing problem balancing checks, VAM heuristic penalty determination, automatic basis tracking, and iterative closed-loop MODI resolution until convergence.
+
